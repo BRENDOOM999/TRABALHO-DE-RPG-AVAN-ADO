@@ -6,6 +6,7 @@ import { BsArrowLeft } from 'react-icons/bs'
 import NomeReCService from '../../services/rpg/NomeReCService';
 import nomerecValidator from '../../validators/nomerecValidator';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import { mask } from 'remask'
 
 const NomeReC = () => {
 
@@ -23,15 +24,31 @@ const NomeReC = () => {
     }
   }, [])
 
+  function handleChange(event) {
+    const mascara = event.target.getAttribute('mask')
+    setValue(event.target.name, mask(event.target.value, mascara))
+  }
+
   function salvar(dados) {
 
     if (params.id) {
         NomeReCService.update(params.id, dados)
+        navigate('/fichasfinais')
     } else {
         NomeReCService.create(dados)
+        navigate('/atributos/create')
     }
+  }
 
-    navigate('/atributos/:id')
+  function salvar(dados) {
+
+    if (params.id) {
+        NomeReCService.update(params.id, dados)
+        navigate('/fichasfinais')
+    } else {
+        NomeReCService.create(dados)
+        navigate('/atributos/create')
+    }
   }
 
   return (
@@ -59,7 +76,8 @@ const NomeReC = () => {
 
         <Form.Group className="mb-3" controlId="nivel">
           <Form.Label>Nivel do personagem: </Form.Label>
-          <Form.Control isInvalid={errors.nivel} type="text" {...register("nivel", nomerecValidator.nivel)} />
+          <Form.Control isInvalid={errors.nivel} type="text" {...register("nivel", nomerecValidator.nivel)} 
+          mask="99" onChange={handleChange}/>
           {errors.nivel && <span>Campo Obrigatório</span>}
         </Form.Group>
 
@@ -73,7 +91,6 @@ const NomeReC = () => {
         
         <div className="text-center">
           <Button onClick={handleSubmit(salvar)} className='btn btn-success'><FaCheck /> Salvar</Button>{' '}
-          <Link className='btn btn-danger' to={-1}><BsArrowLeft /> Voltar</Link>
         </div>
       </Form>
 
